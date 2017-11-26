@@ -2,6 +2,7 @@ package ndfs.mcndfs_1_naive;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.List;
 
 import graph.Graph;
 import graph.GraphFactory;
@@ -38,7 +39,7 @@ public class Worker extends Thread {
 
     private void dfsRed(graph.State s) throws CycleFoundException {
         colors.makePink(s, true);
-        for (graph.State t : graph.post(s)) {
+        for (graph.State t : postic(graph, threadId, null, s)) {
             if (colors.hasColor(t, Color.CYAN)) {
                 throw new CycleFoundException();
             } else if (colors.isPink(t) && colors.isRed(t)) {
@@ -56,7 +57,7 @@ public class Worker extends Thread {
     private void dfsBlue(graph.State s) throws CycleFoundException {
 
         colors.color(s, Color.CYAN);
-        for (graph.State t : graph.post(s)) {
+        for (graph.State t : postic(graph, threadId, null, s)) {
             if (colors.hasColor(t, Color.WHITE) && !colors.isRed(t)) {
                 dfsBlue(t);
             }
@@ -78,6 +79,24 @@ public class Worker extends Thread {
         } catch (CycleFoundException e) {
             result = true;
         }
+    }
+
+    public void shiftRight(List<graph.State> listValues, int number){
+        for(int j = 0; j < number; ++j){
+            graph.State temp = listValues.get(listValues.size()-1);
+            for(int i = listValues.size()-1; i > 0; i--) listValues.set(i,listValues.get(i-1));
+            listValues.set(0, temp);
+        }
+    }
+
+    public List<graph.State> postic(Graph graph, int threadId, Color color, graph.State s){
+        // TODO add dependency on color( in future)
+        List<graph.State> list;
+        synchronized(this){
+            list = graph.post(s);
+        }
+        shiftRight(list, threadId);
+        return list;
     }
 
     public boolean getResult() {
