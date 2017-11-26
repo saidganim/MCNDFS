@@ -82,6 +82,8 @@ public class Worker extends Thread {
     }
 
     public void shiftRight(List<graph.State> listValues, int number){
+        if(listValues.size() == 0)
+            return;
         for(int j = 0; j < number; ++j){
             graph.State temp = listValues.get(listValues.size()-1);
             for(int i = listValues.size()-1; i > 0; i--) listValues.set(i,listValues.get(i-1));
