@@ -28,14 +28,20 @@ public class NNDFS implements NDFS {
     }
 
     @Override
-    public boolean ndfs() throws InterruptedException {
-        boolean result = true;
+    public boolean ndfs(){
+        boolean result = false;
         for(Worker worker : workers)
             worker.start();
+        for(Worker worker : workers){
+            try {
+                worker.join();
+            } catch (InterruptedException e) {
+                result = true;
+            }
+        }
+
         for(Worker worker : workers)
-            worker.join();
-        for(Worker worker : workers)
-            result &= worker.getResult();
+            result |= worker.getResult();
         return result;
     }
 }

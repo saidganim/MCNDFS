@@ -48,7 +48,7 @@ public class Worker extends Thread {
                 colors.decrementCounter(s);
                 colors.waitForState(s);
             }
-            colors.makeRed(s);
+            colors.makeRed(s, true);
             colors.makePink(s, false);
         }
     }

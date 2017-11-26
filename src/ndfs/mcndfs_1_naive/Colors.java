@@ -36,20 +36,30 @@ public class Colors {
         }
     }
 
-    public boolean isPink(State s){
-        return new Boolean(pinkMap.get(s));
+    public boolean isPink(State state){
+        if(!pinkMap.containsKey(state))
+            pinkMap.put(state, new Boolean(false));
+        return pinkMap.get(state);
     }
 
-    public void makePink(State s, boolean value){
-        pinkMap.put(s, value);
+    public void makePink(State state, boolean value){
+        if(!pinkMap.containsKey(state))
+            pinkMap.put(state, new Boolean(true));
+        else
+            pinkMap.put(state, new Boolean(value));
     }
 
     synchronized public static boolean isRed(State state){
-        return new Boolean(redMap.get(state));
+        if(!redMap.containsKey(state))
+            redMap.put(state, new Boolean(false));
+        return redMap.get(state);
     }
 
-    synchronized public static void makeRed(State state){
-        redMap.put(state, true);
+    synchronized public static void makeRed(State state, boolean value){
+        if(!redMap.containsKey(state))
+            redMap.put(state, new Boolean(true));
+        else
+            redMap.put(state, new Boolean(value));
     }
 
     synchronized public static int incrementCounter(State state){
@@ -58,21 +68,25 @@ public class Colors {
         return counterMap.get(state).incrementAndGet();
     }
 
-    synchronized public static int decrementCounter(State state){
+    public static int decrementCounter(State state){
         int result;
-        if(!counterMap.containsKey(state))
-            counterMap.put(state, new AtomicInteger(0));
-        result = counterMap.get(state).decrementAndGet();
-        counterMap.notifyAll();
+        synchronized (counterMap) {
+            if(!counterMap.containsKey(state))
+                counterMap.put(state, new AtomicInteger(0));
+            result = counterMap.get(state).decrementAndGet();
+            counterMap.notifyAll();
+        }
         return result;
     }
 
-    synchronized public static void waitForState(State state){
-        if(counterMap.get(state).get() != 0) {
-            try {
-                counterMap.wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+    public static void waitForState(State state){
+        synchronized (counterMap) {
+            if (counterMap.get(state).get() != 0) {
+                try {
+                    counterMap.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
