@@ -19,11 +19,16 @@ public class Worker extends Thread {
     private final Colors colors = new Colors();
     private boolean result = false;
     private int threadId;
+    private static boolean foundCycle;
     // Throwing an exception is a convenient way to cut off the search in case a
     // cycle is found.
     private static class CycleFoundException extends Exception {
     }
 
+
+    public static boolean cycleIsFound(){
+        return foundCycle;
+    }
     /**
      * Constructs a Worker object using the specified Promela file.
      *
@@ -81,6 +86,7 @@ public class Worker extends Thread {
             nndfs(graph.getInitialState());
         } catch (CycleFoundException e) {
             result = true;
+            Worker.foundCycle = true;
         }
     }
 
