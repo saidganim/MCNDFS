@@ -38,6 +38,8 @@ public class Worker extends Thread {
     }
 
     private void dfsRed(graph.State s) throws CycleFoundException {
+        if(isInterrupted())
+            throw new CycleFoundException();
         colors.makePink(s, true);
         for (graph.State t : postic(graph, threadId, null, s)) {
             if (colors.hasColor(t, Color.CYAN)) {
@@ -55,7 +57,8 @@ public class Worker extends Thread {
     }
 
     private void dfsBlue(graph.State s) throws CycleFoundException {
-
+        if(isInterrupted())
+            throw new CycleFoundException();
         colors.color(s, Color.CYAN);
         for (graph.State t : postic(graph, threadId, null, s)) {
             if (colors.hasColor(t, Color.WHITE) && !colors.isRed(t)) {

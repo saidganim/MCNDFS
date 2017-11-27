@@ -34,7 +34,10 @@ public class NNDFS implements NDFS {
             worker.start();
         for(Worker worker : workers){
             try {
-                worker.join();
+                if(result == false)
+                    worker.join();
+                else
+                    worker.interrupt();
             } catch (InterruptedException e) {
                 result = true;
             }
