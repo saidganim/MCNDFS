@@ -1,13 +1,12 @@
-package ndfs.mcndfs_1_naive;
+package ndfs.mcndfs_3_naive;
+
+import graph.Graph;
+import graph.GraphFactory;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import graph.Graph;
-import graph.GraphFactory;
-import graph.State;
 
 /**
  * This is a straightforward implementation of Figure 1 of
@@ -45,8 +44,6 @@ public class Worker extends Thread {
     }
 
     private void dfsRed(graph.State s) throws CycleFoundException {
-        if(isInterrupted())
-            throw new CycleFoundException();
         colors.makePink(s, true);
         for (graph.State t : postic(graph, threadId, null, s)) {
             if (colors.hasColor(t, Color.CYAN)) {
@@ -61,17 +58,24 @@ public class Worker extends Thread {
             colors.waitForState(s);
         }
         colors.makeRed(s, true);
-        colors.makePink(s, false);
     }
 
     private void dfsBlue(graph.State s) throws CycleFoundException {
+        boolean allRed = true;
         colors.color(s, Color.CYAN);
         for (graph.State t : postic(graph, threadId, null, s)) {
+            if(colors.hasColor(t, Color.CYAN) && (t.isAccepting() || s.isAccepting())){
+                throw new CycleFoundException();
+            }
             if (colors.hasColor(t, Color.WHITE) && !colors.isRed(t)) {
                 dfsBlue(t);
             }
+            if(!Colors.isRed(t))
+                allRed = false;
         }
-        if (s.isAccepting()) {
+        if(allRed)
+            Colors.makeRed(s, true);
+        else if (s.isAccepting()) {
             colors.incrementCounter(s);
             dfsRed(s);
         }
