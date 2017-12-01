@@ -68,12 +68,12 @@ public class Colors {
         return counterMap.get(state).incrementAndGet();
     }
 
-    public static int decrementCounter(State state){
+    synchronized public static int decrementCounter(State state){
         int result;
+        if(!counterMap.containsKey(state))
+            counterMap.put(state, new AtomicInteger(0));
+        result = counterMap.get(state).decrementAndGet();
         synchronized (counterMap) {
-            if(!counterMap.containsKey(state))
-                counterMap.put(state, new AtomicInteger(0));
-            result = counterMap.get(state).decrementAndGet();
             counterMap.notifyAll();
         }
         return result;
@@ -81,7 +81,10 @@ public class Colors {
 
     public static void waitForState(State state){
         synchronized (counterMap) {
-            while (counterMap.get(state).get() != 0) {
+            AtomicInteger counter = counterMap.get(state);
+            if(counter == null)
+                return;
+            while (counter.get() != 0) {
                 try {
                     counterMap.wait();
                 } catch (InterruptedException e) {

@@ -3,6 +3,7 @@ package ndfs.mcndfs_1_naive;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import graph.Graph;
 import graph.GraphFactory;
@@ -19,14 +20,14 @@ public class Worker extends Thread {
     private final Colors colors = new Colors();
     private boolean result = false;
     private int threadId;
-    private static boolean foundCycle;
+    private AtomicBoolean foundCycle;
     // Throwing an exception is a convenient way to cut off the search in case a
     // cycle is found.
     private static class CycleFoundException extends Exception {
     }
 
 
-    public static boolean cycleIsFound(){
+    public AtomicBoolean cycleIsFound(){
         return foundCycle;
     }
     /**
@@ -37,9 +38,10 @@ public class Worker extends Thread {
      * @throws FileNotFoundException
      *             is thrown in case the file could not be read.
      */
-    public Worker(File promelaFile, int id) throws FileNotFoundException {
+    public Worker(File promelaFile, int id, AtomicBoolean cycleFlag) throws FileNotFoundException {
         this.threadId = id;
         this.graph = GraphFactory.createGraph(promelaFile);
+        foundCycle = cycleFlag;
     }
 
     private void dfsRed(graph.State s) throws CycleFoundException {
@@ -86,7 +88,7 @@ public class Worker extends Thread {
             nndfs(graph.getInitialState());
         } catch (CycleFoundException e) {
             result = true;
-            Worker.foundCycle = true;
+            this.foundCycle.set(true);
         }
     }
 
