@@ -37,7 +37,7 @@ public class NNDFS implements NDFS {
                 if(!Worker.cycleIsFound())
                     worker.join();
                     if(!worker.getResult())
-                        return false;
+                        result = false;
                 else{
                     result = true;
                     worker.interrupt();

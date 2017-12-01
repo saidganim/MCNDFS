@@ -81,7 +81,7 @@ public class Colors {
 
     public static void waitForState(State state){
         synchronized (counterMap) {
-            if (counterMap.get(state).get() != 0) {
+            while (counterMap.get(state).get() != 0) {
                 try {
                     counterMap.wait();
                 } catch (InterruptedException e) {
