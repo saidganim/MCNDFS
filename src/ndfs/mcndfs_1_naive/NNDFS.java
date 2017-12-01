@@ -34,11 +34,11 @@ public class NNDFS implements NDFS {
             worker.start();
         for(Worker worker : workers){
             try {
-                if(!Worker.cycleIsFound())
+                if(!Worker.cycleIsFound()){
                     worker.join();
-                    if(!worker.getResult())
-                        result = false;
-                else{
+                    if(worker.getResult())
+                        result = true;
+                }else{
                     result = true;
                     worker.interrupt();
                 }
