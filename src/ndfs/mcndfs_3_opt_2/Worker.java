@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -21,6 +22,7 @@ public class Worker extends Thread {
     private boolean result = false;
     private int threadId;
     private AtomicBoolean cycleIsFound;
+    private Random rand;
     // Throwing an exception is a convenient way to cut off the search in case a
     // cycle is found.
     private static class CycleFoundException extends Exception {
@@ -39,6 +41,7 @@ public class Worker extends Thread {
         cycleIsFound = cycleFlag;
         this.threadId = id;
         this.graph = GraphFactory.createGraph(promelaFile);
+        rand = new Random(threadId);
     }
 
     private void dfsRed(graph.State s) throws CycleFoundException {
@@ -104,10 +107,8 @@ public class Worker extends Thread {
     public List<graph.State> postic(Graph graph, int threadId, Color color, graph.State s){
         // TODO add dependency on color( in future)
         List<graph.State> list;
-        synchronized(this){
-            list = graph.post(s);
-        }
-        Collections.shuffle(list);
+        list = graph.post(s);
+        Collections.shuffle(list,rand);
         return list;
     }
 

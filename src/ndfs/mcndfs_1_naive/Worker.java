@@ -92,9 +92,7 @@ public class Worker extends Thread {
     public List<graph.State> postic(Graph graph, int threadId, Color color, graph.State s){
         // TODO add dependency on color( in future)
         List<graph.State> list;
-        synchronized(this){
-            list = graph.post(s);
-        }
+        list = graph.post(s);
         //shiftRight(list, threadId);
         Collections.shuffle(list);
         return list;
