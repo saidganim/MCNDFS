@@ -37,9 +37,8 @@ public class Colors {
     }
 
     public boolean isPink(State state){
-        if(!pinkMap.containsKey(state))
-            pinkMap.put(state, new Boolean(false));
-        return pinkMap.get(state);
+       Boolean value = pinkMap.get(state);
+       return value == null? false : value.booleanValue();
     }
 
     public void makePink(State state, boolean value){
@@ -50,16 +49,12 @@ public class Colors {
     }
 
     synchronized public static boolean isRed(State state){
-        if(!redMap.containsKey(state))
-            redMap.put(state, new Boolean(false));
-        return redMap.get(state);
+        Boolean value = redMap.get(state);
+        return value == null? false : value.booleanValue();
     }
 
     synchronized public static void makeRed(State state, boolean value){
-        if(!redMap.containsKey(state))
-            redMap.put(state, new Boolean(true));
-        else
-            redMap.put(state, new Boolean(value));
+        redMap.put(state, new Boolean(value));
     }
 
     synchronized public static int incrementCounter(State state){

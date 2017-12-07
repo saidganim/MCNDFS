@@ -14,7 +14,6 @@ import ndfs.NDFS;
 public class NNDFS implements NDFS {
 
     private ArrayList<Worker> workers = new ArrayList<Worker>();
-    private AtomicBoolean foundCycle;
     /**
      * Constructs an NDFS object using the specified Promela file.
      *
@@ -24,9 +23,8 @@ public class NNDFS implements NDFS {
      *             is thrown in case the file could not be read.
      */
     public NNDFS(File promelaFile, int threadNum) throws FileNotFoundException {
-        foundCycle = new AtomicBoolean(false);
         for(int i = 0; i < threadNum; ++i)
-            this.workers.add(new Worker(promelaFile, i, foundCycle));
+            this.workers.add(new Worker(promelaFile, i));
     }
 
     @Override
@@ -36,17 +34,10 @@ public class NNDFS implements NDFS {
             worker.start();
         for(Worker worker : workers){
             try {
-                if(!foundCycle.get()) {
-                    worker.join();
-//                  For optimization
-//                    if (!worker.getResult())
-//                        return false;
-//                    else
-//                        return true;
-                    result |= worker.getResult();
-                } else{
-                    return true;
-                }
+                if(result)
+                    worker.interrupt();
+                worker.join();
+                result |= worker.getResult();
             } catch (InterruptedException e) {
             }
         }

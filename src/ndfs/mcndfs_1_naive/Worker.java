@@ -2,6 +2,8 @@ package ndfs.mcndfs_1_naive;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -20,16 +22,12 @@ public class Worker extends Thread {
     private final Colors colors = new Colors();
     private boolean result = false;
     private int threadId;
-    private AtomicBoolean foundCycle;
     // Throwing an exception is a convenient way to cut off the search in case a
     // cycle is found.
     private static class CycleFoundException extends Exception {
     }
 
 
-    public AtomicBoolean cycleIsFound(){
-        return foundCycle;
-    }
     /**
      * Constructs a Worker object using the specified Promela file.
      *
@@ -38,10 +36,9 @@ public class Worker extends Thread {
      * @throws FileNotFoundException
      *             is thrown in case the file could not be read.
      */
-    public Worker(File promelaFile, int id, AtomicBoolean cycleFlag) throws FileNotFoundException {
+    public Worker(File promelaFile, int id) throws FileNotFoundException {
         this.threadId = id;
         this.graph = GraphFactory.createGraph(promelaFile);
-        foundCycle = cycleFlag;
     }
 
     private void dfsRed(graph.State s) throws CycleFoundException {
@@ -65,6 +62,8 @@ public class Worker extends Thread {
     }
 
     private void dfsBlue(graph.State s) throws CycleFoundException {
+        if(isInterrupted())
+            throw new CycleFoundException();
         colors.color(s, Color.CYAN);
         for (graph.State t : postic(graph, threadId, null, s)) {
             if (colors.hasColor(t, Color.WHITE) && !colors.isRed(t)) {
@@ -87,17 +86,6 @@ public class Worker extends Thread {
             nndfs(graph.getInitialState());
         } catch (CycleFoundException e) {
             result = true;
-            this.foundCycle.set(true);
-        }
-    }
-
-    public void shiftRight(List<graph.State> listValues, int number){
-        if(listValues.size() == 0)
-            return;
-        for(int j = 0; j < number; ++j){
-            graph.State temp = listValues.get(listValues.size()-1);
-            for(int i = listValues.size()-1; i > 0; i--) listValues.set(i,listValues.get(i-1));
-            listValues.set(0, temp);
         }
     }
 
@@ -107,7 +95,8 @@ public class Worker extends Thread {
         synchronized(this){
             list = graph.post(s);
         }
-        shiftRight(list, threadId);
+        //shiftRight(list, threadId);
+        Collections.shuffle(list);
         return list;
     }
 
