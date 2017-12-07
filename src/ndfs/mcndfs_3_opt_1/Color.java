@@ -1,4 +1,4 @@
-package ndfs.mcndfs_3_opt_4;
+package ndfs.mcndfs_3_opt_1;
 
 /**
  * This enumeration enumerates the possible colors.

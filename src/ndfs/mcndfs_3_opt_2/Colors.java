@@ -36,7 +36,6 @@ public class Colors {
             return map.get(state) == color;
         }
     }
-
     public boolean isPink(State state){
         Boolean value = pinkMap.get(state);
         return value == null? false : value.booleanValue();
