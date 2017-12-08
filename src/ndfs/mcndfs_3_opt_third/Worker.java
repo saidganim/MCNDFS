@@ -1,4 +1,4 @@
-package ndfs.mcndfs_3_opt_2;
+package ndfs.mcndfs_3_opt_third;
 
 import graph.Graph;
 import graph.GraphFactory;
@@ -41,7 +41,7 @@ public class Worker extends Thread {
         cycleIsFound = cycleFlag;
         this.threadId = id;
         this.graph = GraphFactory.createGraph(promelaFile);
-        rand = new Random(threadId);
+        rand = new Random(threadId); // third optimization - seed shuffling
     }
 
     private void dfsRed(graph.State s) throws CycleFoundException {

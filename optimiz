@@ -1,0 +1,4 @@
+1) Using free-lock structs for Counter;
+2) Using free-lock structs for redMap;
+3) Using AtomicBoolean flag for singaling that cycle is found;
+4) Seeded random for shuffling( not visible result )))))))

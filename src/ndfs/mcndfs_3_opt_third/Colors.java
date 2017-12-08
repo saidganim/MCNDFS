@@ -1,4 +1,4 @@
-package ndfs.mcndfs_3_opt_1;
+package ndfs.mcndfs_3_opt_third;
 
 import graph.State;
 
@@ -36,7 +36,6 @@ public class Colors {
             return map.get(state) == color;
         }
     }
-
     public boolean isPink(State state){
         Boolean value = pinkMap.get(state);
         return value == null? false : value.booleanValue();

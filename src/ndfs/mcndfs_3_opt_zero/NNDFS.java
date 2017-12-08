@@ -1,11 +1,11 @@
-package ndfs.mcndfs_3_naive;
+package ndfs.mcndfs_3_opt_zero;
 
 import ndfs.NDFS;
-import ndfs.mcndfs_3_naive.Worker;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Implements the {@link NDFS} interface, mostly delegating the work to a
@@ -14,6 +14,7 @@ import java.util.ArrayList;
 public class NNDFS implements NDFS {
 
     private ArrayList<Worker> workers = new ArrayList<Worker>();
+    private AtomicBoolean cycleIsFound = new AtomicBoolean(false); // Zero optimization cycleIsFound flag
     /**
      * Constructs an NDFS object using the specified Promela file.
      *
@@ -23,24 +24,22 @@ public class NNDFS implements NDFS {
      *             is thrown in case the file could not be read.
      */
     public NNDFS(File promelaFile, int threadNum) throws FileNotFoundException {
+
         for(int i = 0; i < threadNum; ++i)
-            this.workers.add(new Worker(promelaFile, i));
+            this.workers.add(new Worker(promelaFile, i, cycleIsFound));
     }
 
     @Override
     public boolean ndfs(){
-        boolean result = false;
         for(Worker worker : workers)
             worker.start();
         for(Worker worker : workers){
             try {
-                if(result)
+                if(cycleIsFound.get())
                     worker.interrupt();
                 worker.join();
-                result |= worker.getResult();
-            } catch (InterruptedException e) {
-            }
+            } catch (InterruptedException e) { }
         }
-        return result;
+        return cycleIsFound.get();
     }
 }

@@ -1,4 +1,4 @@
-package ndfs.mcndfs_3_opt_2;
+package ndfs.mcndfs_3_opt_third;
 
 import ndfs.NDFS;
 
@@ -34,6 +34,8 @@ public class NNDFS implements NDFS {
             worker.start();
         for(Worker worker : workers){
             try {
+                if(cycleIsFound.get())
+                    worker.interrupt();
                 worker.join();
             } catch (InterruptedException e) { }
         }
