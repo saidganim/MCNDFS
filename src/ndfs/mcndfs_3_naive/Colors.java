@@ -74,10 +74,11 @@ public class Colors {
         return result;
     }
 
-    synchronized public static void waitForState(State state) throws InterruptedException {
-        if(counterMap.get(state) == null)
-            counterMap.put(state, new AtomicInteger(0));
-        while (counterMap.get(state).get() != 0) {
+    public static void waitForState(State state) throws InterruptedException {
+        AtomicInteger counter = counterMap.get(state);
+        if(counter == null)
+            return;
+        while (counter.get() != 0) {
             synchronized (counterMap) {
                     counterMap.wait();
             }
