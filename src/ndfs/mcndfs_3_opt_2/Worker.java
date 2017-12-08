@@ -1,4 +1,4 @@
-package ndfs.mcndfs_3_opt_first;
+package ndfs.mcndfs_3_opt_2;
 
 import graph.Graph;
 import graph.GraphFactory;

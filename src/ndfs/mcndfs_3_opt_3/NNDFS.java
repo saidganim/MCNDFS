@@ -1,4 +1,4 @@
-package ndfs.mcndfs_3_opt_third;
+package ndfs.mcndfs_3_opt_3;
 
 import ndfs.NDFS;
 

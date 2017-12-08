@@ -1,10 +1,9 @@
-package ndfs.mcndfs_3_opt_first;
+package ndfs.mcndfs_3_opt_1;
 
 import graph.State;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -14,7 +13,7 @@ public class Colors {
 
     private final Map<State, Color> map = new HashMap<State, Color>();
     private final Map<State, Boolean> pinkMap = new HashMap<State, Boolean>();
-    private static Map<State, Boolean> redMap = new ConcurrentHashMap<State, Boolean>(); // Using concurrent hash map (1 st optimization)
+    private static Map<State, Boolean> redMap = new HashMap<State, Boolean>();
     private static Map<State, AtomicInteger> counterMap = new HashMap<State, AtomicInteger>();
 
     /**
@@ -38,8 +37,8 @@ public class Colors {
     }
 
     public boolean isPink(State state){
-        Boolean value = pinkMap.get(state);
-        return value == null? false : value.booleanValue();
+       Boolean value = pinkMap.get(state);
+       return value == null? false : value.booleanValue();
     }
 
     public void makePink(State state, boolean value){
@@ -49,12 +48,12 @@ public class Colors {
             pinkMap.put(state, new Boolean(value));
     }
 
-    public static boolean isRed(State state){
+    synchronized public static boolean isRed(State state){
         Boolean value = redMap.get(state);
         return value == null? false : value.booleanValue();
     }
 
-    public static void makeRed(State state, boolean value){
+    synchronized public static void makeRed(State state, boolean value){
         redMap.put(state, new Boolean(value));
     }
 
@@ -75,14 +74,17 @@ public class Colors {
         return result;
     }
 
-    public static void waitForState(State state) throws InterruptedException {
+    public static void waitForState(State state){
         synchronized (counterMap) {
             AtomicInteger counter = counterMap.get(state);
             if(counter == null)
                 return;
             while (counter.get() != 0) {
-                counterMap.wait();
-
+                try {
+                    counterMap.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
