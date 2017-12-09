@@ -55,7 +55,11 @@ public class Worker extends Thread {
         }
         if(s.isAccepting()){
             colors.decrementCounter(s);
-            colors.waitForState(s);
+            try {
+                colors.waitForState(s);
+            } catch (InterruptedException e) {
+                throw new CycleFoundException();
+            }
         }
         colors.makeRed(s, true);
         colors.makePink(s, false);

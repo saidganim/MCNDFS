@@ -58,7 +58,9 @@ public class Worker extends Thread {
             colors.decrementCounter(s);
             try{
                 colors.waitForState(s);
-            } catch(InterruptedException e){}
+            } catch(InterruptedException e){
+                throw new CycleFoundException();
+            }
         }
         colors.makeRed(s, true);
     }

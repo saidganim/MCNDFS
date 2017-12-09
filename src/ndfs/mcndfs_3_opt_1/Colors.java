@@ -74,17 +74,13 @@ public class Colors {
         return result;
     }
 
-    public static void waitForState(State state){
+    public static void waitForState(State state) throws InterruptedException {
         synchronized (counterMap) {
             AtomicInteger counter = counterMap.get(state);
             if(counter == null)
                 return;
             while (counter.get() != 0) {
-                try {
-                    counterMap.wait();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                counterMap.wait();
             }
         }
     }
