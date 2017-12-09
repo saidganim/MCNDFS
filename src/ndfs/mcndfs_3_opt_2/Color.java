@@ -5,5 +5,5 @@ package ndfs.mcndfs_3_opt_2;
  */
 public enum Color {
 
-    CYAN, WHITE, RED, BLUE
+    CYAN, WHITE, BLUE
 }
