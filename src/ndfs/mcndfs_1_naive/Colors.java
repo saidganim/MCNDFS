@@ -12,9 +12,9 @@ import graph.State;
 public class Colors {
 
     private final Map<State, Color> map = new HashMap<State, Color>();
-    private final Map<State, Boolean> pinkMap = new HashMap<State, Boolean>();
-    private static Map<State, Boolean> redMap = new HashMap<State, Boolean>();
-    private static Map<State, AtomicInteger> counterMap = new HashMap<State, AtomicInteger>();
+    private final Map<State, Boolean> pinkMap = new HashMap<State, Boolean>(); // to maintain pink states locally
+    private static Map<State, Boolean> redMap = new HashMap<State, Boolean>(); // to maintain red states globally
+    private static Map<State, AtomicInteger> counterMap = new HashMap<State, AtomicInteger>(); // to maintain counter for states globally
 
     /**
      * Returns <code>true</code> if the specified state has the specified color,

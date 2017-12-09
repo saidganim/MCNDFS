@@ -78,8 +78,8 @@ public class Colors {
         AtomicInteger counter = counterMap.get(state);
         if(counter == null)
             return;
-        while (counter.get() != 0) {
-            synchronized (counterMap) {
+        synchronized (counterMap) {
+            while (counter.get() != 0) {
                     counterMap.wait();
             }
         }

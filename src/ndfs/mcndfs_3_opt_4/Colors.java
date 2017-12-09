@@ -73,8 +73,8 @@ public class Colors {
 
     public static void waitForState(State state) throws InterruptedException {
         counterMap.putIfAbsent(state, new AtomicInteger(0));
-        while (counterMap.get(state).get() != 0) {
-            synchronized (counterMap) {
+        synchronized (counterMap) {
+            while (counterMap.get(state).get() != 0) {
                     counterMap.wait();
             }
         }
